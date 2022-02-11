@@ -3,6 +3,10 @@ package com.example.socialnetwork.AppUser;
 import com.example.socialnetwork.Registration.Token.ConfirmationToken;
 import com.example.socialnetwork.Registration.Token.ConfirmationTokenService;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -10,6 +14,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.UUID;
 
 @Service
@@ -18,17 +24,22 @@ public class AppUserService implements UserDetailsService {
 
     private final static String USER_NOT_FOUND_MSG = "User with email %s not found";
 
+    @Autowired
     private final AppUserRepository appUserRepository;
+
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final ConfirmationTokenService confirmationTokenService;
 
     @Override
-    public UserDetails loadUserByUsername(String email)
-            throws UsernameNotFoundException {
-        return appUserRepository.findByEmail(email)
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        AppUser user= appUserRepository.findByEmail(email)
                 .orElseThrow(()->
                         new UsernameNotFoundException
                                 (String.format(USER_NOT_FOUND_MSG, email)));
+        return new User(user.getUsername(),user.getPassword(),
+                true,true,true,true,
+                getAuthorities("ROLE_USER"));
+
     }
 
     public boolean userExists(String appUserEmail){
@@ -66,4 +77,9 @@ public class AppUserService implements UserDetailsService {
     public int enableAppUser(String email) {
         return appUserRepository.enableAppUser(email);
     }
+
+    private Collection<? extends GrantedAuthority> getAuthorities(String role_user) {
+        return Collections.singletonList(new SimpleGrantedAuthority(role_user));
+    }
+
 }
