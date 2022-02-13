@@ -7,6 +7,7 @@ import com.example.socialnetwork.Email.EmailSender;
 import com.example.socialnetwork.Email.EmailText;
 import com.example.socialnetwork.Registration.Token.ConfirmationToken;
 import com.example.socialnetwork.Registration.Token.ConfirmationTokenService;
+import com.example.socialnetwork.Security.AuthenticationResponse;
 import com.example.socialnetwork.Security.JwtProvider;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
-import java.util.function.BiPredicate;
+
 @Service
 @AllArgsConstructor
 public class AuthService {
@@ -39,7 +40,7 @@ public class AuthService {
     private final ConfirmationTokenService confirmationTokenService;
     private final EmailSender emailSender;
 
-    public String register(RegistrationRequest request) {
+    public void register(RegistrationRequest request) {
 
             boolean isValidEmail = emailValidator.
                     test(request.getEmail());
@@ -61,7 +62,7 @@ public class AuthService {
                     request.getEmail(),
                     EmailText.buildEmail(request.getFirstName(), link));
 
-            return token;
+
     }
 
     @Transactional
@@ -89,11 +90,12 @@ public class AuthService {
         return "confirmation";
     }
 
-    public String login(LoginRequest loginRequest) {
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),
+    public AuthenticationResponse login(LoginRequest loginRequest) {
+        Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),
                 loginRequest.getPassword()));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        return jwtProvider.generateToken(authentication);
+        SecurityContextHolder.getContext().setAuthentication(authenticate);
+        String authenticationToken = jwtProvider.generateToken(authenticate);
+        return new AuthenticationResponse(authenticationToken, loginRequest.getUsername());
     }
 
     public Optional<User> getCurrentUser() {
