@@ -1,5 +1,6 @@
 package com.example.socialnetwork.Post;
 
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -7,7 +8,8 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("api/posts/")
+@RequestMapping(path="/api/posts")
+@AllArgsConstructor
 public class PostController {
 
     @Autowired

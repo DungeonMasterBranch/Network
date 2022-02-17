@@ -27,7 +27,9 @@ public class AppUserService implements UserDetailsService {
     @Autowired
     private final AppUserRepository appUserRepository;
 
+    @Autowired
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Autowired
     private final ConfirmationTokenService confirmationTokenService;
 
     @Override

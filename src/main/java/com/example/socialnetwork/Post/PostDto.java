@@ -1,5 +1,7 @@
 package com.example.socialnetwork.Post;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 public class PostDto {
     private Long id;
     private String content;
