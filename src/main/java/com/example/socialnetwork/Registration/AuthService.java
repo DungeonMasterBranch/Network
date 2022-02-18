@@ -10,6 +10,8 @@ import com.example.socialnetwork.Registration.Token.ConfirmationTokenService;
 import com.example.socialnetwork.Security.AuthenticationResponse;
 import com.example.socialnetwork.Security.JwtProvider;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -26,6 +28,8 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 public class AuthService {
+
+    private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
 
     @Autowired
     private final AppUserService appUserService;
@@ -87,6 +91,7 @@ public class AuthService {
                 confirmationToken.getAppUser().getEmail()
         );
 
+        logger.info("confirmation");
         return "confirmation";
     }
 

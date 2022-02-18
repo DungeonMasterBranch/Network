@@ -1,12 +1,25 @@
 package com.example.socialnetwork.Post;
 
+import com.example.socialnetwork.Comments.Comment;
+import com.example.socialnetwork.Comments.CommentDto;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
 
 public class PostDto {
     private Long id;
     private String content;
     private String title;
     private String username;
+    private List<CommentDto> comments;
+
+    public List<CommentDto> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<CommentDto> comments) {
+        this.comments = comments;
+    }
 
     public Long getId() {
         return id;

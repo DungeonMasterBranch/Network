@@ -1,6 +1,7 @@
 package com.example.socialnetwork.Post;
 
 
+import com.example.socialnetwork.Comments.CommentService;
 import com.example.socialnetwork.Exception.PostNotFoundException;
 import com.example.socialnetwork.Registration.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,8 @@ public class PostService {
     private AuthService authService;
     @Autowired
     private PostRepository postRepository;
-
+    @Autowired
+    private CommentService commentService;
 
     @Transactional
     public void createPost(PostDto postDto){
@@ -40,12 +42,20 @@ public class PostService {
         return mapFromPostToDto(post);
     }
 
+    @Transactional
+    public List<PostDto> readUsersPosts(String username) {
+        List<Post> posts = postRepository.findPostsByUsername(username);
+        return posts.stream().map(this::mapFromPostToDto).collect(toList());
+    }
+
+
     private PostDto mapFromPostToDto(Post post) {
         PostDto postDto = new PostDto();
         postDto.setId(post.getId());
         postDto.setTitle(post.getTitle());
         postDto.setContent(post.getContent());
         postDto.setUsername(post.getUsername());
+        postDto.setComments(commentService.getAllCommentsOfPost(post.getId()));
         return postDto;
     }
 
@@ -59,4 +69,6 @@ public class PostService {
         post.setUpdatedOn(Instant.now());
         return post;
     }
+
+
 }
